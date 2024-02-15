@@ -35,10 +35,11 @@ def correct_git_clone():
     cmd = ['git', 'config', '--get', 'remote.origin.url']
     output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
     output = output.decode('utf-8').rstrip('\n')
-    return f'git clone {output}'
-
-def error(n_line):
-    print(f"Incorrect git command at line: {n_line}", file=sys.stderr)
+    repo_name_prefix = "nsu-fipl/pw-2024-first-task-"
+    start = output.find(repo_name_prefix)
+    assert start > 0, f"Expected repo name to contain '{repo_name_prefix}'"
+    user_name = output[len(repo_name_prefix) + start:].split()[0]
+    return f"{repo_name_prefix}{user_name}"
 
 def test_git():
     n_line = 1
@@ -46,10 +47,10 @@ def test_git():
         cmd = f.readline()
         assert cmd
         cmd = cmd.rstrip('\n')
-        assert cmd == correct_git_clone()
+        assert correct_git_clone() in cmd, f"Incorrect git clone line"
         hashes = expected.strip('\n').split('\n')
         for cmd in f:
             n_line += 1
             cmd_hex = hex(normalize(cmd))
             h = hashes[n_line - 2]
-            assert cmd_hex == h
+            assert cmd_hex == h, f"Incorrect git command at line: {n_line}"
