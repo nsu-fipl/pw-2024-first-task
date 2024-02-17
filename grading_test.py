@@ -55,6 +55,8 @@ def test_git():
         assert correct_git_clone() in cmd, f"Incorrect git clone line"
         hashes = expected.strip('\n').split('\n')
         for cmd in f:
+            if cmd.isspace():
+                continue
             n_line += 1
             cmd_hex = hex(normalize(cmd))
             h = hashes[n_line - 2]
