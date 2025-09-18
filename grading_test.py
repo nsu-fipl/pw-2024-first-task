@@ -44,11 +44,13 @@ def test_git():
         cmd = cmd.rstrip('\n')
         assert 'clone' in cmd, f"Incorrect git clone line"
         hashes = expected.strip('\n').split('\n')
+        total_line = 0
         for cmd in f:
+            total_line += 1
             if cmd.isspace():
                 continue
             n_line += 1
             cmd_hex = hex(normalize(cmd))
             h = hashes[n_line - 2]
-            assert cmd_hex == h, f"Incorrect git command at line: {n_line}"
+            assert cmd_hex == h, f"Incorrect git command at line: {total_line}"
         assert (n_line - 1) >= len(hashes), f"Not enough commands, expected {len(hashes) + 1}"
